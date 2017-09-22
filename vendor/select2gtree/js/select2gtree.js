@@ -30,6 +30,8 @@ THE SOFTWARE.
 			showUseButton: true
 		};
 
+		opts = $.extend(defaults, options);
+
 		//TODO: scroll to selected item
         //TODO: set_selected from js via $('timezone').val(1);
         //TODO: add options for decorator callbacks
@@ -37,10 +39,7 @@ THE SOFTWARE.
         //TODO: option to display breadcrumbs in main input text box
         //TODO: support ajax loaded menu items
 
-        var opts = $.extend(true, {}, defaults, options);
-
-		return this.each(function() {
-
+		$(this).each(function() {
 			if ($('body').data('select2gtree_instance_count') == undefined) {
 				$('body').data('select2gtree_instance_count', 0);
 			} else {
@@ -51,13 +50,12 @@ THE SOFTWARE.
 			open_counter[instance_count] = 0;
 
 			$(this).data('select2gtree_id', instance_count);
-
 		});
 
-        $(this).data('options', opts);
-        $(this).select2(opts).on("select2:open", open);
+		$(this).select2(opts).on("select2:open", open);
 	};
 
+    var opts = {};
     var instance_count = 0;
     var display_ids = [];
     var parent_ids = [];
@@ -68,7 +66,6 @@ THE SOFTWARE.
 
     //TODO: decorate and bind elements once
 	function open() {
-        var opts = $(this).data('options');
         console.log(opts);
 
 		////console.log('open');
