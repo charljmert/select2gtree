@@ -86,6 +86,7 @@ THE SOFTWARE.
 			$('.select2-search').append('<div id="select2tree_back_container" class="input-group"><span id="select2tree_back" class="btn btn-default input-group-addon"> <i class="fa fa-angle-left"> </i> </span> </div>');
 			$('.select2-search__field').appendTo('#select2tree_back_container');
             $('.select2-search').find('input').addClass('form-control');
+            $('.select2-search').find('input').removeClass('select2-search__field');
             $('.select2-search').find('input').css('border-radius-left', '0px');
 
 			$('#select2tree_back').unbind('mousedown');
