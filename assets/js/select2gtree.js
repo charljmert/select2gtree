@@ -26,9 +26,11 @@ THE SOFTWARE.
 	$.fn.select2gtree = function(options) {
 		var defaults = {
 			language: "en",
-			theme: "bootstrap"
+			theme: "bootstrap",
+			showUseButton: true
 		};
-		var opts = $.extend(defaults, options);
+
+		opts = $.extend(defaults, options);
 
 		//TODO: scroll to selected item
         //TODO: set_selected from js via $('timezone').val(1);
@@ -37,7 +39,7 @@ THE SOFTWARE.
         //TODO: option to display breadcrumbs in main input text box
         //TODO: support ajax loaded menu items
 
-		$(this).each(function(){
+		$(this).each(function() {
 			if ($('body').data('select2gtree_instance_count') == undefined) {
 				$('body').data('select2gtree_instance_count', 0);
 			} else {
@@ -53,10 +55,10 @@ THE SOFTWARE.
 		$(this).select2(opts).on("select2:open", open);
 	};
 
+    var opts = {};
     var instance_count = 0;
     var display_ids = [];
     var parent_ids = [];
-    // older // var screen_objs = [];
     var select_ptr = null;
     var open_counter = [];
     var breadcrumb = [];
@@ -64,6 +66,8 @@ THE SOFTWARE.
 
     //TODO: decorate and bind elements once
 	function open() {
+        console.log(opts);
+
 		////console.log('open');
 		instance_id = $(this).data('select2gtree_id');
         $('.select2-search').css('display', 'block');
@@ -113,28 +117,30 @@ THE SOFTWARE.
 						$(this).css('font-weight', 'bold');
 
                         // use button
-                        $(this).data('mouseover_counter', 0);
-                        var item = $(this);
-                        $('#' + id).on('mouseover', function() {
-                            $(this).data('mouseover_counter', $(this).data('mouseover_counter') + 1);
-                            if ($(this).data('mouseover_counter') == 1) {
-                                $(this).append('<span id="' + id + '_use" class="btn btn-default pull-right" style="width:30%; margin:0px; padding: 0px">Use</span>');
-
-                                $('#' + id + '_use').on('mousedown', function(e){
-                                    //console.log('mousedown: click: button use');
-
-                                    $('#' + id + '_use').remove();
-                                    select(item);
-
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                });
-                            }
-                        });
-                        $('#' + id).on('mouseleave', function() {
+                        if (opts.showUseButton) {
                             $(this).data('mouseover_counter', 0);
-                            $('#' + id + '_use').remove();
-                        });
+                            var item = $(this);
+                            $('#' + id).on('mouseover', function() {
+                                $(this).data('mouseover_counter', $(this).data('mouseover_counter') + 1);
+                                if ($(this).data('mouseover_counter') == 1) {
+                                    $(this).append('<span id="' + id + '_use" class="btn btn-default pull-right" style="width:30%; margin:0px; padding: 0px">Use</span>');
+
+                                    $('#' + id + '_use').on('mousedown', function(e){
+                                        //console.log('mousedown: click: button use');
+
+                                        $('#' + id + '_use').remove();
+                                        select(item);
+
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                    });
+                                }
+                            });
+                            $('#' + id).on('mouseleave', function() {
+                                $(this).data('mouseover_counter', 0);
+                                $('#' + id + '_use').remove();
+                            });
+                        }
 
                         $(this).bind('mouseup', function(e) {
                             var id = $(this).attr('id').match(/-\d*$/)[0].replace('-','');
@@ -197,28 +203,30 @@ THE SOFTWARE.
 						$(this).css('font-weight', 'bold');
 
                         // use button
-                        $(this).data('mouseover_counter', 0);
-                        var item = $(this);
-                        $('#' + id).on('mouseover', function() {
-                            $(this).data('mouseover_counter', $(this).data('mouseover_counter') + 1);
-                            if ($(this).data('mouseover_counter') == 1) {
-                                $(this).append('<span id="' + id + '_use" class="btn btn-default pull-right" style="width:30%; margin:0px; padding: 0px">Use</span>');
-
-                                $('#' + id + '_use').on('mousedown', function(e){
-                                    //console.log('mousedown: click: button use');
-
-                                    $('#' + id + '_use').remove();
-                                    select(item);
-
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                });
-                            }
-                        });
-                        $('#' + id).on('mouseleave', function() {
+                        if (opts.showUseButton) {
                             $(this).data('mouseover_counter', 0);
-                            $('#' + id + '_use').remove();
-                        });
+                            var item = $(this);
+                            $('#' + id).on('mouseover', function() {
+                                $(this).data('mouseover_counter', $(this).data('mouseover_counter') + 1);
+                                if ($(this).data('mouseover_counter') == 1) {
+                                    $(this).append('<span id="' + id + '_use" class="btn btn-default pull-right" style="width:30%; margin:0px; padding: 0px">Use</span>');
+
+                                    $('#' + id + '_use').on('mousedown', function(e){
+                                        //console.log('mousedown: click: button use');
+
+                                        $('#' + id + '_use').remove();
+                                        select(item);
+
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                    });
+                                }
+                            });
+                            $('#' + id).on('mouseleave', function() {
+                                $(this).data('mouseover_counter', 0);
+                                $('#' + id + '_use').remove();
+                            });
+                        }
 
                         $(this).bind('mouseup', function(e) {
                             var id = $(this).attr('id').match(/-\d*$/)[0].replace('-','');
