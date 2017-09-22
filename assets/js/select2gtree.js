@@ -30,6 +30,7 @@ THE SOFTWARE.
 		};
 		var opts = $.extend(defaults, options);
 
+		//TODO: scroll to selected item
         //TODO: set_selected from js via $('timezone').val(1);
         //TODO: add options for decorator callbacks
         //TODO: enable multi select
@@ -59,6 +60,7 @@ THE SOFTWARE.
     var select_ptr = null;
     var open_counter = [];
     var breadcrumb = [];
+    var selectOriginalEvent = null;
 
     //TODO: decorate and bind elements once
 	function open() {
@@ -74,32 +76,11 @@ THE SOFTWARE.
                 id : $(o).attr('value'),
                 parent_id: ($(o).attr('parent'))? $(o).attr('parent') : null
             });
-
-            //////console.log('parent_ids');
-            //////console.log(parent_ids);
-            /*
-            if (parent_id == '' && (!$(o).attr('parent') || $(o).attr('parent') == '' || $(o).attr('parent') == '0')) {
-                // catch root elements
-                ////console.log($(o).text());
-                ////console.log($(o).val());
-                display_ids.push($(o).val());
-            } else if (parent_id != '' && (!$(o).attr('parent') == parent_id)) {
-                // catch child elements
-                display_ids.push($(o).val());
-            }
-            */
         });
 
-		//////console.log('parent_ids');
-		//////console.log(parent_ids);
-
-		////console.log('instance_id: ' + instance_id);
-		////console.log('open_counter @('+instance_id+'): ' + open_counter[instance_id]);
-		////console.log('open_counter: ' + open_counter);
 		if (open_counter[instance_id] == 0) {
-            search_txt_input = $('.select2-search');
- 
-            $('.select2-search').html('<div class="input-group"><span id="select2tree_back" class="btn btn-default input-group-addon"> <i class="fa fa-angle-left"> </i> </span> ' + search_txt_input.html() + '</div>');
+			$('.select2-search').append('<div id="select2tree_back_container" class="input-group"><span id="select2tree_back" class="btn btn-default input-group-addon"> <i class="fa fa-angle-left"> </i> </span> </div>');
+			$('.select2-search__field').appendTo('#select2tree_back_container');
             $('.select2-search').find('input').addClass('form-control');
             $('.select2-search').find('input').css('border-radius-left', '0px');
 
@@ -119,39 +100,9 @@ THE SOFTWARE.
             }
         });
 
-        // TODO: store previous mouseup and trigger on final or "Use This" click
-		// clone events and hide div
-		////console.log('instance_id: ' + $(this).data('select2gtree_id'));
-
-/*
-		if (open_counter[instance_id] == 0) {
-			$('body').append('<div id="select2-hidden_' + instance_id + '"></>');
-			$('#select2-hidden_' + instance_id).css('visibility', 'hidden');
-			$('#select2-hidden_' + instance_id).css('display', 'none');
-			$(".select2-results__options").clone(true).appendTo('#select2-hidden_' + instance_id);
-		}
-
-        $(".select2-results__options").bind('mouseup', function(e) {
-			//console.log('e: before');
-			//console.log($(this).attr('id'));
-            //console.log(e);
-        });
-*/
-
-        $(".select2-results__options").unbind('mouseup');
-
-/*
-        $(".select2-results__options").bind('mouseup', function(e) {
-			//console.log('e: after');
-            //console.log(e);
-        });
-*/
-
 		setTimeout(function() {
 
             $(".select2-results__options li").each(function() {
-                ////console.log($(this).attr('id'));
-                ////console.log(display_ids);
                 id = $(this).attr('id');
 
                 if (id && display_ids.indexOf(id.match(/-\d*$/)[0].replace('-','')) > -1) {
@@ -185,25 +136,23 @@ THE SOFTWARE.
                             $('#' + id + '_use').remove();
                         });
 
-                        //$(this).unbind('mousedown');
                         $(this).bind('mouseup', function(e) {
                             var id = $(this).attr('id').match(/-\d*$/)[0].replace('-','');
-                            //////console.log('clicked['+parent_id+']' + $(this).text());
 
                             $(this).css('display', 'none');
                             $(this).css('visibility', 'hidden');
 
                             parent_id = get_parent_id(id);
                             breadcrumb.push(parent_id);
-                            //console.log(breadcrumb);
 
                             open_children(id);
+							e.preventDefault();
+							e.stopPropagation();
                         });
 					} else {
 
                         $(this).bind('mouseup', function(e) {
                             var id = $(this).attr('id').match(/-\d*$/)[0].replace('-','');
-                            //////console.log('clicked['+parent_id+']' + $(this).text());
 
                             $(this).css('display', 'none');
                             $(this).css('visibility', 'hidden');
@@ -214,11 +163,8 @@ THE SOFTWARE.
 
 
                 } else {
-                    //older //screen_objs.push($(this));
-                    //$(this).remove();
                     $(this).css('display', 'none');
                     $(this).css('visibility', 'hidden');
-                    //////console.log(screen_objs);
                 }
             });
 
@@ -228,32 +174,21 @@ THE SOFTWARE.
 	}
 
 	function open_children(parent_id) {
-		////console.log('open_children');
 		if (parent_id == undefined) {
 			parent_id = 0;
 		}
-		////console.log('parent_id: ' + parent_id);
 
         $(".select2-results__options li").each(function() {
-            //$(this).remove();
             $(this).css('display', 'none');
             $(this).css('visibility', 'hidden');
-            //////console.log('hiding: ' + $(this));
         });
 
-        ////console.log(parent_ids);
-
         $(".select2-results__options li").each(function() {
-            ////console.log($(this).attr('id'));
-            ////console.log(display_ids);
             id = $(this).attr('id');
 
             for (x = 0; (x < parent_ids.length); x++) {
-                ////console.log(parent_ids[x].parent_id);
                 if (id && parent_ids[x].id == id.match(/-\d*$/)[0].replace('-','') && parent_ids[x].parent_id == parent_id) {
 					if (has_children(id.match(/-\d*$/)[0].replace('-',''))) {
-						//$(this).decorateBold($this); //TODO: callback to decorate bold items
-						//console.log($(this).text());
 						$(this).css('font-weight', 'bold');
 
                         //TODO: callback to decorate bold items
@@ -285,38 +220,33 @@ THE SOFTWARE.
                             $('#' + id + '_use').remove();
                         });
 
-                        //$(this).unbind('mousedown');
                         $(this).bind('mouseup', function(e) {
                             var id = $(this).attr('id').match(/-\d*$/)[0].replace('-','');
-                            //////console.log('clicked['+parent_id+']' + $(this).text());
 
                             $(this).css('display', 'none');
                             $(this).css('visibility', 'hidden');
 
                             parent_id = get_parent_id(id);
                             breadcrumb.push(parent_id);
-                            //console.log(breadcrumb);
 
                             open_children(id);
                         });
 
 					}
 
-                    //////console.log($(this).text());
                     $(this).css('display', 'block');
                     $(this).css('visibility', 'visible');
 
-                    $(this).unbind('mousedown');
-                    $(this).bind('mousedown', function() {
+                    $(this).bind('mouseup', function(e) {
                         var cid = $(this).attr('id').match(/-\d*$/)[0].replace('-','');
-                        //////console.log('bind2:clicked['+parent_id+']' + $(this).text());
                         var cparent_id = get_parent_id(cid);
                         breadcrumb.push(cparent_id);
-                        //////console.log(breadcrumb);
                         if (has_children(cid)) {
                             open_children(cid);
+							e.preventDefault();
+							e.stopPropagation();
                         } else {
-                            select(this);
+                            //select(this);
                         }
                     });
 
@@ -325,63 +255,11 @@ THE SOFTWARE.
             }
         });
 
-        /* //older
-        for (i = 0; (i < screen_objs.length); i++) {
-            o = screen_objs[i];
-            ////console.log(o);
-            id = $(o).attr('id');
-            //console.log(id);
-            for (x = 0; (x < parent_ids.length); x++) {
-                if (id && parent_ids[x].parent_id == id.match(/-\d*$/)[0].replace('-','')) {
-                    //console.log($(o).text());
-                    $('.select2-results__options').append(o);
-                }
-            }
-        }
-        */
-
-/*
-		setTimeout(function() {
-			//moveOption();
-
-			$(".select2-results__options li").each(function() {
-				var $this = $(this);
-                //console.log($(this));
-				//loop li add some classes and properties
-				if($this.attr("parent")) {
-					$(this).siblings("li[val=" + $this.attr("parent") + "]").find("span:eq(0)").addClass("glyphicon glyphicon-chevron-down switch").css({
-						"padding": "0 10px",
-						"cursor": "default"
-					});
-					$(this).siblings("li[val=" + $this.attr("parent") + "]").find("span:eq(1)").css("font-weight", "bold");
-				}
-				//add gap for children
-				if(!$this.attr("style")) {
-					var paddingLeft = getLevel($this.attr("val")) * 2;
-					$("li[parent='" + $this.attr("parent") + "']").css("padding-left", paddingLeft + "em");
-				}
-			});
-
-			//override mousedown for collapse/expand 
-			$(".switch").mousedown(function() {
-				switchAction($(this).parent().attr("val"), $(this).hasClass("glyphicon-chevron-right"));
-				event.stopPropagation();
-			});
-
-			//override mouseup to nothing
-			$(".switch").mouseup(function() {
-				return false;
-			});
-		}, 0);
-*/
-
-
 	}
 
     function get_parent_id(id) {
         for (x = 0; (x < parent_ids.length); x++) {
 
-            //if (id && parent_ids[x].id == id.match(/-\d*$/)[0].replace('-','') && parent_ids[x].parent_id == parent_id) {
             if (id && parent_ids[x].id == id) {
                 return parent_ids[x].parent_id;
             }
@@ -392,12 +270,8 @@ THE SOFTWARE.
 
     function has_children(parent_id) {
 		var counter = 0;
-		////console.log('id: ' + parent_id);
-		////console.log('parent_id: ' + parent_id);
 
         for (x = 0; (x < parent_ids.length); x++) {
-
-            //if (id && parent_ids[x].id == id.match(/-\d*$/)[0].replace('-','') && parent_ids[x].parent_id == parent_id) {
             if (parent_ids[x].parent_id == parent_id) {
 				return true;
             }
@@ -411,8 +285,6 @@ THE SOFTWARE.
 		parent_id = get_parent_id(id);
 
         for (x = 0; (x < parent_ids.length); x++) {
-
-            //if (id && parent_ids[x].id == id.match(/-\d*$/)[0].replace('-','') && parent_ids[x].parent_id == parent_id) {
             if (id && parent_ids[x].parent_id == parent_id) {
 				counter++;
             }
@@ -422,19 +294,13 @@ THE SOFTWARE.
     }
 
     function select(obj) {
-        ////console.log($(obj).attr('id'));
-        ////console.log($(obj).text());
-
         orig_id = $(obj).attr('id');
         target_id = orig_id.replace(/select2-(.*)-result-.*$/, 'select2-$1-container');
 
         select_id = orig_id.replace(/select2-(.*)-result-.*$/, '$1');
         value = orig_id.match(/-\d*$/)[0].replace('-','');
 
-        //console.log(value);
         $('#' + select_id).val(value);
-
-        //console.log(target_id);
 
         // that prints 'select2-timezone-result-h70q-253_use'
         // if for 'select2-test' becomes 'select2-test-select2-container'
@@ -448,53 +314,19 @@ THE SOFTWARE.
 
 		// bug with more than one select tree in view, need to clean up the previous search div
 		// search and back button for 1st select list displays when 2nd select list opened
-		$('.select2-container.select2-container--bootstrap.select2-container--open')[1].remove()
+		if ($('.select2-container.select2-container--bootstrap.select2-container--open')[1]) {
+			$('.select2-container.select2-container--bootstrap.select2-container--open')[1].remove()
+		}
 
         $('.select2-search').css('display', 'none');
         $('.select2-results').css('display', 'none');
 
         $('.select2').removeClass('select2-container--open');
-        $('.select2').addClass('select2-container--focus');
+        $('.select2').addClass('select2-container--below');
 
     }
 
-    function select(obj) {
-        ////console.log($(obj).attr('id'));
-        ////console.log($(obj).text());
-
-        orig_id = $(obj).attr('id');
-        target_id = orig_id.replace(/select2-(.*)-result-.*$/, 'select2-$1-container');
-
-        select_id = orig_id.replace(/select2-(.*)-result-.*$/, '$1');
-        value = orig_id.match(/-\d*$/)[0].replace('-','');
-
-        //console.log(value);
-        $('#' + select_id).val(value);
-
-        //console.log(target_id);
-
-        // that prints 'select2-timezone-result-h70q-253_use'
-        // if for 'select2-test' becomes 'select2-test-select2-container'
-        $('#' + target_id).attr('title', $(obj).text());
-        $('#' + target_id).text($(obj).text());
-
-        // from new select2 impl
-        $('.select2-selection').attr('aria-expanded', 'false');
-        $('.select2-selection').attr('aria-hidden', 'true');
-        $('.select2-selection').removeAttr('aria-activedescendant');
-
-		// bug with more than one select tree in view, need to clean up the previous search div
-		// search and back button for 1st select list displays when 2nd select list opened
-		$('.select2-container.select2-container--bootstrap.select2-container--open')[1].remove()
-
-        $('.select2-search').css('display', 'none');
-        $('.select2-results').css('display', 'none');
-
-        $('.select2').removeClass('select2-container--open');
-        $('.select2').addClass('select2-container--focus');
-
-    }
-
+	//TODO: implement set_selected
     function set_selected(val) {
     }
 
