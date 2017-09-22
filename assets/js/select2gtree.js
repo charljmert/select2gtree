@@ -1,7 +1,7 @@
 /*
 The MIT License
 
-Copyright (c) 2017 Charl Joseph Mert, Inc. http://angularjs.org
+Copyright (c) 2017 Charl Joseph Mert, Inc. https://github.com/charljmert/select2gtree
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,7 @@ THE SOFTWARE.
 		};
 		var opts = $.extend(defaults, options);
 
+        //TODO: set_selected from js via $('timezone').val(1);
         //TODO: add options for decorator callbacks
         //TODO: enable multi select
         //TODO: option to display breadcrumbs in main input text box
@@ -455,6 +456,46 @@ THE SOFTWARE.
         $('.select2').removeClass('select2-container--open');
         $('.select2').addClass('select2-container--focus');
 
+    }
+
+    function select(obj) {
+        ////console.log($(obj).attr('id'));
+        ////console.log($(obj).text());
+
+        orig_id = $(obj).attr('id');
+        target_id = orig_id.replace(/select2-(.*)-result-.*$/, 'select2-$1-container');
+
+        select_id = orig_id.replace(/select2-(.*)-result-.*$/, '$1');
+        value = orig_id.match(/-\d*$/)[0].replace('-','');
+
+        //console.log(value);
+        $('#' + select_id).val(value);
+
+        //console.log(target_id);
+
+        // that prints 'select2-timezone-result-h70q-253_use'
+        // if for 'select2-test' becomes 'select2-test-select2-container'
+        $('#' + target_id).attr('title', $(obj).text());
+        $('#' + target_id).text($(obj).text());
+
+        // from new select2 impl
+        $('.select2-selection').attr('aria-expanded', 'false');
+        $('.select2-selection').attr('aria-hidden', 'true');
+        $('.select2-selection').removeAttr('aria-activedescendant');
+
+		// bug with more than one select tree in view, need to clean up the previous search div
+		// search and back button for 1st select list displays when 2nd select list opened
+		$('.select2-container.select2-container--bootstrap.select2-container--open')[1].remove()
+
+        $('.select2-search').css('display', 'none');
+        $('.select2-results').css('display', 'none');
+
+        $('.select2').removeClass('select2-container--open');
+        $('.select2').addClass('select2-container--focus');
+
+    }
+
+    function set_selected(val) {
     }
 
 })(jQuery);

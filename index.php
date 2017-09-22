@@ -75,7 +75,7 @@
     <option value='25' parent='1'>Casablanca</option>
     <option value='26' parent='1'>Ceuta</option>
     <option value='27' parent='1'>Conakry</option>
-    <option value='28' parent='1'>Dakar</option>
+    <option value='28' parent='1' selected>Dakar</option>
     <option value='29' parent='1'>Dar_es_Salaam</option>
     <option value='30' parent='1'>Djibouti</option>
     <option value='31' parent='1'>Douala</option>
@@ -582,7 +582,7 @@
     <option value='33' parent='1'>Freetown</option>
     <option value='34' parent='1'>Gaborone</option>
     <option value='35' parent='1'>Harare</option>
-    <option value='36' parent='1'>Johannesburg</option>
+    <option value='36' parent='1' selected>Johannesburg</option>
     <option value='37' parent='1'>Juba</option>
     <option value='38' parent='1'>Kampala</option>
     <option value='39' parent='1'>Khartoum</option>
