@@ -784,33 +784,6 @@
         $("#test-select2").select2();
     </script>
 
-    <div class="row" style="margin-left: 20px; margin-top: 20px">
-    <h4> Capture next event to be executed later </h4>
-    Click will stop the default click event from being run "hello original" and run it's own event "hello custom" and then the original event later at it's own time<br/> <br/>
-      <div class="form-group" id="test-group" style="margin-bottom: 5px;" class="col-sm-12 col-md-12 col-lg-12">
-        <button id="btn_01" class="btn btn-success col-sm-2 col-md-2 col-lg-2 control-label" onclick="console.log('hello real original')">Click Later</button>
-      </div>
-    </div>
-
-    <script type="text/javascript">
-        // The original event
-        $('#btn_01').on('click', function(){
-            console.log('hello original');
-        });
-
-        $('#btn_01').on('click', function(e){
-            e.preventDefault();
-
-            console.log(e);
-            console.log('hello custom');
-            // broken somehow, width = 100%
-        });
-
-        //clickEvents = $('#btn_01').data('events').click;
-        //console.log(clickEvents);
-
-    </script>
-
 </body>
 
 </html>
