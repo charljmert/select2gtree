@@ -37,9 +37,9 @@ THE SOFTWARE.
         //TODO: option to display breadcrumbs in main input text box
         //TODO: support ajax loaded menu items
 
-        var opts = $.extend(true, {}, defaults, options);
+        var opts = $.extend(defaults, options);
 
-		return this.each(function() {
+		$(this).each(function() {
 
 			if ($('body').data('select2gtree_instance_count') == undefined) {
 				$('body').data('select2gtree_instance_count', 0);
@@ -69,19 +69,17 @@ THE SOFTWARE.
     //TODO: decorate and bind elements once
 	function open() {
         var opts = $(this).data('options');
-        console.log(opts);
 
-		////console.log('open');
 		instance_id = $(this).data('select2gtree_id');
         $('.select2-search').css('display', 'block');
         $('.select2-results').css('display', 'block');
 
         select_ptr = this;
         $(this).children().each(function(i, o){
-            //////console.log('select_ptr: ' + i);
             parent_ids.push({
                 id : $(o).attr('value'),
-                parent_id: ($(o).attr('parent'))? $(o).attr('parent') : null
+                parent_id: ($(o).attr('parent'))? $(o).attr('parent') : null,
+                selected: ($(o).attr('selected'))? true : false
             });
         });
 
@@ -114,6 +112,7 @@ THE SOFTWARE.
                 id = $(this).attr('id');
 
                 if (id && display_ids.indexOf(id.match(/-\d*$/)[0].replace('-','')) > -1) {
+
 					if (has_children(id.match(/-\d*$/)[0].replace('-',''))) {
                         //TODO: callback to decorate bold items
 						//$(this).decorateBold($this); 
@@ -176,6 +175,23 @@ THE SOFTWARE.
                     $(this).css('display', 'none');
                     $(this).css('visibility', 'hidden');
                 }
+
+                // Scroll to selected
+                /*
+                for (x = 0; (x < parent_ids.length); x++) {
+                    if (id && parent_ids[x].id == id.match(/-\d*$/)[0].replace('-','')) {
+                        if (parent_ids[x].selected) {
+                            console.log("$('#" + id + "').offset().top");
+                            console.log($(this).offset());
+                            console.log($('.select2-results__options').outerHeight(false));
+                            $('.select2-results__options').animate({
+                                scrollTop: $(this).offset().top - $('.select2-results__options').outerHeight(false) - 55
+                            }, 1);
+                        }
+                    }
+                }
+                */
+
             });
 
         }, 0);
@@ -184,6 +200,11 @@ THE SOFTWARE.
 	}
 
 	function open_children(parent_id) {
+        orig_id = $(this).attr('id');
+        select_id = orig_id.replace(/select2-(.*)-result-.*$/, '$1');
+
+        var opts = $('#' + select_id).data('options');
+
 		if (parent_id == undefined) {
 			parent_id = 0;
 		}
