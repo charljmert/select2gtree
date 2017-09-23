@@ -618,7 +618,7 @@
         <label class="col-sm-4 col-md-4 col-lg-4 control-label">Time Zone 3</label>
 
         <div class="col-sm-8 col-md-8 col-lg-8">
-<select id="test-select2" class='select2' style="width:100%" name="test_select2">
+<select id="timezone3" class='select2-gtree' style="width:100%" name="test_select2">
 
     <option value='1' parent='0'> Africa </option>
     <option value='2' parent='0'> America </option>
@@ -860,7 +860,8 @@
 
           </p>
             <script type="text/javascript">
-                $("#test-select2").select2();
+                $('#timezone3').select2gtree();
+                $('#timezone3').select2gtree({setSelected : 4});
             </script>
 
           <!--<p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>-->

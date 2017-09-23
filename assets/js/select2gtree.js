@@ -30,8 +30,9 @@ THE SOFTWARE.
 			showUseButton: true
 		};
 
+        //TODO: set_selected from js via $('timezone').val(1).change();
 		//TODO: scroll to selected item
-        //TODO: set_selected from js via $('timezone').val(1);
+		//TODO: fix back button on nested default selected
         //TODO: add options for decorator callbacks
         //TODO: enable multi select
         //TODO: option to display breadcrumbs in main input text box
@@ -52,10 +53,16 @@ THE SOFTWARE.
 
 			$(this).data('select2gtree_id', instance_count);
 
+            if (opts.setSelected !== undefined) {
+                set_selected(this, opts.setSelected);
+            }
 		});
 
-        $(this).data('options', opts);
-        $(this).select2(opts).on("select2:open", open);
+		instance_id = $(this).data('select2gtree_id');
+		if (open_counter[instance_id] == 0) {
+            $(this).data('options', opts);
+            $(this).select2(opts).on("select2:open", open);
+        }
 	};
 
     var instance_count = 0;
@@ -360,7 +367,13 @@ THE SOFTWARE.
     }
 
 	//TODO: implement set_selected
-    function set_selected(val) {
+    function set_selected(obj, val) {
+        select_id = $(obj).attr('id');
+        target_id = 'select2-' + select_id + '-container';
+
+        $('#' + select_id).val(val);
+        $('#' + target_id).attr('title', $('#' + select_id).text());
+        $('#' + target_id).text($('#' + select_id).text());
     }
 
 })(jQuery);
