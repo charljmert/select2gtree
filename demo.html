@@ -45,17 +45,40 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.6/select2-bootstrap.min.css" rel="stylesheet" />
     <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>-->
+    <script src="assets/js/select2/4.0.3/select2.js"></script>
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>-->
     <script src="vendor/select2gtree/js/select2/4.0.3/select2.js"></script>
     <script src="vendor/select2gtree/js/select2/4.0.3/i18n/en.js"></script>
     <!--<script src="vendor/select2gtree/js/select2gtree.js"></script>-->
     <script src="assets/js/select2gtree.js"></script>
+    <link href="assets/css/select2gtree.css" rel="stylesheet" />
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
+    <!-- highlight.js code highlighting
+    ================================================== -->
+    <link rel="stylesheet"
+          href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <link href="assets/css/atelier-forest-light.css" rel="stylesheet" />
 
   </head>
 
   <body>
 
+<script>
+$(document).ready(function() {
+  $('pre code').each(function(i, block) {
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+<pre>
+    <code class="javascript">
+        $(".select2-gtree1").select2gtree();
+    </code>
+</pre>
 <!--
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
@@ -346,7 +369,8 @@
           </p>
         <script type="text/javascript">
             $(".select2-gtree1").select2gtree({
-                showUseButton: true
+                showUseButton: true,
+                showBreadcrumb: false
             });
         </script>
 

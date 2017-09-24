@@ -1,0 +1,9 @@
+.select2gtree-breadcrumb {
+    display: block;
+    position: absolute;
+    background-color: #eeeeff;
+    border-radius: 4px;
+    border: 1px solid#ddddee;
+    padding: 6px 24px 6px 12px;
+    z-index: 10;
+}

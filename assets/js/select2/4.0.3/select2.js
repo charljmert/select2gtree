@@ -609,6 +609,7 @@ S2.define('select2/utils',[
   };
 
   Observable.prototype.on = function (event, callback) {
+    //console.log('Observable.prototype: ' + event);
     this.listeners = this.listeners || {};
 
     if (event in this.listeners) {
