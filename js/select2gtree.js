@@ -1,26 +1,28 @@
 /*
-The MIT License
-
-Copyright (c) 2017 Charl Joseph Mert, Inc. http://charl.faceclues.co.za/select2gtree/
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-*/
+ *   Select2GTree Version 1.0.0
+ *
+ *   The MIT License
+ *
+ *   Copyright (c) 2017 Charl Joseph Mert, Inc. http://charl.faceclues.co.za/select2gtree/
+ *
+ *   Permission is hereby granted, free of charge, to any person obtaining a copy
+ *   of this software and associated documentation files (the "Software"), to deal
+ *   in the Software without restriction, including without limitation the rights
+ *   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *   copies of the Software, and to permit persons to whom the Software is
+ *   furnished to do so, subject to the following conditions:
+ *
+ *   The above copyright notice and this permission notice shall be included in
+ *   all copies or substantial portions of the Software.
+ *
+ *   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ *   THE SOFTWARE.
+ */
 
 (function($) {
 	$.fn.select2gtree = function(options) {
@@ -44,7 +46,9 @@ THE SOFTWARE.
 		//TODO: scroll to selected item
         //TODO: enable tooltip and partial breadcrumb view for searches where the child items are the same in different trees
         //TODO: enable multi select
-        //TODO: support ajax loaded menu items
+        //TODO: test/support ajax loaded menu items
+        //TODO: implement prototype pattern, store object in data('select2gtree') - https://github.com/jquery-boilerplate/jquery-patterns/blob/master/patterns/jquery.prototypal-inheritance.plugin-boilerplate.js
+        //TODO: support/test install from npm, bower etc.
 
         var opts = $.extend(defaults, options);
 
@@ -191,6 +195,20 @@ THE SOFTWARE.
                 display_ids.push($(o).val());
             }
         });
+
+        /*
+         TODO: implement prototype pattern, create init and one open(parent_id) before this can be completed
+        // correct breadcrumb for default values being child elements
+        var selected_parent_id = $('#' + select_id).find('option[value="'+$('#' + select_id).val()+'"]').attr('parent');
+
+        if (typeof selected_parent_id !== undefined && selected_parent_id != null && selected_parent_id != 0 && selected_parent_id != '') {
+            console.log('corercting default child' + selected_parent_id );
+            breadcrumb.push(selected_parent_id);
+            console.log(set_breadcrumb_offset(selected_parent_id));
+            open_children(selected_parent_id);
+            return;
+        }
+        */
 
 		setTimeout(function() {
 
@@ -438,6 +456,22 @@ THE SOFTWARE.
         }
 
         return false;
+    }
+
+    function set_breadcrumb_offset(parent_id) {
+ 		var counter = 0;
+
+        //TODO: check for cyclic ref, cyclic ref eternal loop on parent and child ids
+        //      i.e. the parent_id of a child item cannot be any of it's children
+
+        for (x = 0; (x < parent_ids.length); x++) {
+            if (parent_ids[x].id == parent_id && (parent_ids[x].parent_id != 0 && parent_ids[x].parent_id != null && parent_ids[x].parent_id != '')) {
+				breadcrumb.push(parent_ids[x].parent_id);
+                return set_breadcrumb_offset(parent_ids[x].parent_id);
+            }
+        }
+
+        return breadcrumb.reverse();
     }
 
     function count_children(id) {
