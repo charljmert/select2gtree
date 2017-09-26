@@ -1,5 +1,5 @@
 /*
- *   Select2GTree Version 1.0.1
+ *   Select2GTree Version 1.0.0
  *
  *   The MIT License
  *
@@ -24,117 +24,93 @@
  *   THE SOFTWARE.
  */
 
-// Uses CommonJS, AMD or browser globals to create a jQuery plugin.
-
-(function (factory) {
-    if (typeof define === 'function' && define.amd) {
-        // AMD. Register as an anonymous module.
-        define(['jquery'], factory);
-    } else if (typeof module === 'object' && module.exports) {
-        // Node/CommonJS
-        module.exports = function( root, jQuery ) {
-            if ( jQuery === undefined ) {
-                // require('jQuery') returns a factory that requires window to
-                // build a jQuery instance, we normalize how we use modules
-                // that require this pattern but the window provided is a noop
-                // if it's defined (how jquery works)
-                if ( typeof window !== 'undefined' ) {
-                    jQuery = require('jquery');
-                }
-                else {
-                    jQuery = require('jquery')(root);
-                }
-            }
-            factory(jQuery);
-            return jQuery;
-        };
-    } else {
-        // Browser globals
-        factory(jQuery);
-    }
-} (function (jQuery) {
-
-// Select2GT - an object representing a concept that you want
-// to model (e.g. a car)
-var Select2GT = {
-    instance_count : 0,
-    display_ids : [],
-    parent_ids : [],
-    parent_idsx : [],
-    select_ptr : null,
-    open_counter : [],
-    breadcrumb : [],
-    breadcrumb_texts : [],
-    selectOriginalEvent : null,
-    select2_obj : null,
-    prev_selected_text : null,
-    selected_text : null,
-    target_id : null,
-
-    init: function( options, elem ) {
-        // Mix in the passed-in options with the default options
-        this.options = $.extend( {}, this.options, options );
-
-        // Save the element reference, both as a jQuery
-        // reference and a normal reference
-        this.elem  = elem;
-        this.$elem = $(elem);
-
+(function($) {
+	$.fn.select2gtree = function(options) {
         if (this.$elem.data('select2gtree')) {
             return false;
         }
 
-        //DONE: fix back button not going back to root when selecting a 2nd level child and clicking back twice
-        //DONE: fix speed issue, back button child select
-        //DONE: add showBreadcrumbs option
+		var defaults = {
+			language: "en",
+			theme: "bootstrap",
+			showUseButton: true,
+			showBreadcrumbs: true
+		};
+
+		//DONE: fix back button not going back to root when selecting a 2nd level child and clicking back twice
+		//DONE: fix speed issue, back button child select
+		//DONE: add showBreadcrumbs option
         //DONE: $('timezone').val(1).change(); select2 changes the value already
-        //TODO: fix back button, breadcrumbs on nested default selected
+		//TODO: fix back button, this.breadcrumbs on nested default selected
         //TODO: demo templateResult styling
-        //TODO: scroll to selected item
-        //TODO: enable tooltip and partial breadcrumb view for searches where the child items are the same in different trees
+		//TODO: scroll to selected item
+        //TODO: enable tooltip and partial this.breadcrumb view for searches where the child items are the same in different trees
         //TODO: enable multi select
         //TODO: test/support ajax loaded menu items
         //TODO: implement prototype pattern, store object in data('select2gtree') - https://github.com/jquery-boilerplate/jquery-patterns/blob/master/patterns/jquery.prototypal-inheritance.plugin-boilerplate.js
         //TODO: support/test install from npm, bower etc.
 
-        this.$elem.select2(this.options).on("select2:open", open);
+        var this.options = $.extend(defaults, options);
 
-        this.select2_obj = this.$elem.data('select2');
-        this.select2_core(this);
+		this.$elem.each(function() {
 
-        // Build the DOM's initial structure
-        this._build();
+			if ($('body').data('select2gtree_this.instance_count') == undefined) {
+				$('body').data('select2gtree_this.instance_count', 0);
+			} else {
+				$('body').data('select2gtree_this.instance_count', $('body').data('select2gtree_this.instance_count') + 1);
+			}
 
-        // return this so that we can chain and use the bridge with less code.
-        return this;
-    },
-    options: {
-        language: "en",
-        theme: "bootstrap",
-        showUseButton: true,
-        showBreadcrumbs: true
-    },
-    _build: function() {
-        this.$elem.html('<h1>'+this.options.name+'</h1>');
-    },
-    myMethod: function( msg ) {
-        // You have direct access to the associated and cached
-        // jQuery element
-        console.log("myMethod triggered");
-        // this.$elem.append('<p>'+msg+'</p>');
-    },
-    select2_core: function(obj) {
+			this.instance_count = $('body').data('select2gtree_this.instance_count');
+			this.open_counter[this.instance_count] = 0;
+
+			this.$elem.data('select2gtree_id', this.instance_count);
+
+		});
+
+		instance_id = this.$elem.data('select2gtree_id');
+		if (this.open_counter[instance_id] == 0) {
+            this.$elem.data('options', this.options);
+            //this.$elem.select2(this.options);
+
+            this.$elem.select2(this.options).on("select2:open", open);
+
+            this.select2_obj = this.$elem.data('select2');
+            select2_core(this);
+
+            //console.log(jQuery._data( this.$elem.get(0), "events" ));
+            // Will create prototype optimized class and export here
+            this.$elem.data('select2gtree', true);
+        }
+	};
+
+    var this.instance_count = 0;
+    var this.display_ids = [];
+    var this.parent_ids = [];
+    var this.parent_idsx = [];
+    var this.select_ptr = null;
+    var this.open_counter = [];
+    var this.breadcrumb = [];
+    var this.breadcrumb_texts = [];
+    var this.selectOriginalEvent = null;
+    var this.select2_obj = null;
+    var this.prev_this.selected_text = null;
+    var this.selected_text = null;
+    var this.target_id = null;
+
+    function select2_core(obj) {
         //console.log(this.select2_obj);
+        var this.options = $(obj).data('options');
+
         this.select2_obj.on('select', function (e) {
             if (this.options.showBreadcrumbs) {
-                clear_breadcrumbs();
+                clear_this.breadcrumbs();
                 $('#' + this.target_id).text(this.selected_text);
             }
         });
 
         this.select2_obj.on('close', function (params) {
             if (this.options.showBreadcrumbs) {
-                clear_breadcrumbs();
+                clear_this.breadcrumbs();
                 $('#' + this.target_id).text(this.prev_this.selected_text);
             }
         });
@@ -150,10 +126,12 @@ var Select2GT = {
 
         console.log(this.select2_obj.results);
         //*/
-    },
+    }
 
     //TODO: decorate and bind elements once
-	open: function() {
+	function open() {
+        var this.options = this.$elem.data('options');
+
 		instance_id = this.$elem.data('select2gtree_id');
         $('.select2-search').css('display', 'block');
         $('.select2-results').css('display', 'block');
@@ -197,7 +175,7 @@ var Select2GT = {
 
                 if (this.options.showBreadcrumbs) {
                     this.breadcrumb_texts.pop();
-                    update_breadcrumb(this.breadcrumb_texts);
+                    update_this.breadcrumb(this.breadcrumb_texts);
                 }
 
 				//console.log(this.breadcrumb);
@@ -246,13 +224,13 @@ var Select2GT = {
                 if (this.options.showBreadcrumbs) {
                     this.$elem.on('mouseover', function() {
                         this.breadcrumb_texts.push(text);
-                        update_breadcrumb(this.breadcrumb_texts);
+                        update_this.breadcrumb(this.breadcrumb_texts);
                         this.selected_text = text;
                     });
 
                     this.$elem.on('mouseout', function() {
                         this.breadcrumb_texts.pop();
-                        update_breadcrumb(this.breadcrumb_texts);
+                        update_this.breadcrumb(this.breadcrumb_texts);
                         this.selected_text = '';
                     });
                 }
@@ -311,7 +289,7 @@ var Select2GT = {
 
                             if (this.options.showBreadcrumbs) {
                                 this.breadcrumb_texts.push(this.$elem.text());
-                                update_breadcrumb(this.breadcrumb_texts);
+                                update_this.breadcrumb(this.breadcrumb_texts);
                             }
 
                             open_children(id);
@@ -357,11 +335,13 @@ var Select2GT = {
         }, 0);
 
         this.open_counter[instance_id]++;
-	},
+	}
 
-	open_children: function (parent_id) {
+	function open_children(parent_id) {
         orig_id = this.$elem.attr('id');
         select_id = orig_id.replace(/select2-(.*)-result-.*$/, '$1');
+
+        var this.options = $('#' + select_id).data('options');
 
 		if (parent_id == undefined) {
 			parent_id = 0;
@@ -435,7 +415,7 @@ var Select2GT = {
 
                     if (this.options.showBreadcrumbs) {
                         this.breadcrumb_texts.push(this.$elem.text());
-                        update_breadcrumb(this.breadcrumb_texts);
+                        update_this.breadcrumb(this.breadcrumb_texts);
                     }
 
                     if (has_children(cid)) {
@@ -450,9 +430,9 @@ var Select2GT = {
             }
         });
 
-	},
+	}
 
-    get_parent_id: function (id) {
+    function get_parent_id(id) {
         for (x = 0; (x < this.parent_ids.length); x++) {
 
             if (id && this.parent_ids[x].id == id) {
@@ -461,9 +441,9 @@ var Select2GT = {
         }
 
         return null;
-    },
+    }
 
-    has_children: function(parent_id) {
+    function has_children(parent_id) {
 		var counter = 0;
 
         for (x = 0; (x < this.parent_ids.length); x++) {
@@ -473,9 +453,9 @@ var Select2GT = {
         }
 
         return false;
-    },
+    }
 
-    set_breadcrumb_offset: function (parent_id) {
+    function set_this.breadcrumb_offset(parent_id) {
  		var counter = 0;
 
         //TODO: check for cyclic ref, cyclic ref eternal loop on parent and child ids
@@ -489,9 +469,9 @@ var Select2GT = {
         }
 
         return this.breadcrumb.reverse();
-    },
+    }
 
-    count_children: function(id) {
+    function count_children(id) {
 		var counter = 0;
 		parent_id = get_parent_id(id);
 
@@ -502,9 +482,9 @@ var Select2GT = {
         }
 
         return counter;
-    },
+    }
 
-    select: function(obj) {
+    function select(obj) {
         orig_id = $(obj).attr('id');
         this.target_id = orig_id.replace(/select2-(.*)-result-.*$/, 'select2-$1-container');
 
@@ -535,64 +515,19 @@ var Select2GT = {
         $('.select2').removeClass('select2-container--open');
         $('.select2').addClass('select2-container--below');
 
-        clear_breadcrumbs();
-    },
+        clear_this.breadcrumbs();
+    }
 
-    update_breadcrumb: function(breadcrumb_texts) {
+    function update_this.breadcrumb(this.breadcrumb_texts) {
         if (this.breadcrumb_texts.length > 0) {
             $('#' + this.target_id).text(this.breadcrumb_texts.join(' / '));
         } else {
             $('#' + this.target_id).text(this.prev_this.selected_text);
         }
-    },
+    }
 
-    clear_breadcrumbs: function() {
+    function clear_this.breadcrumbs() {
         this.breadcrumb = [];
         this.breadcrumb_texts = [];
     }
-};
-
-// Object.create support test, and fallback for browsers without it
-if ( typeof Object.create !== "function" ) {
-    Object.create = function (o) {
-        function F() {}
-        F.prototype = o;
-        return new F();
-    };
-}
-
-// Create a plugin based on a defined object
-/*
-$.fn.select2gtree = function( name, object ) {
-  $.fn[name] = function( options ) {
-    return this.each(function() {
-      if (! $.data( this, name ) ) {
-        $.data(this, name, Object.create(object).init(options, this));
-      }
-    });
-  };
-};
-//*/
-
-// Usage:
-// With Select2GT, we could now essentially do this:
-// $.plugin('myobj', Select2GT);
-
-// and at this point we could do the following
-// $('#elem').myobj({name: "John"});
-// var inst = $('#elem').data('myobj');
-// inst.myMethod('I am a method');
-
-//$.fn.jqueryPlugin = function () { return true; };
-
-    $.fn.select2gtree = function(options) {
-        if (! $.data( this, 'select2gtree' ) ) {
-            $.data(this, 'select2gtree', Object.create(Select2GT).init(options, this));
-        }
-
-    };
-
-
-
-
-}));
+})(jQuery);
