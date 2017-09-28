@@ -285,8 +285,6 @@
 
                         $(this).off('mouseup.s2gt_treeitem');
                         $(this).on('mouseup.s2gt_treeitem', function(e) {
-                            var id = $(this).attr('id').match(/-\d*$/)[0].replace('-','');
-
                             $(this).css('display', 'none');
                             $(this).css('visibility', 'hidden');
 
@@ -297,7 +295,7 @@
                                 update_breadcrumb(breadcrumb_texts);
                             }
 
-                            open_children(id);
+                            open_children(c_id);
 							e.preventDefault();
 							e.stopPropagation();
                         });
@@ -305,7 +303,6 @@
 
                         $(this).off('mouseup.s2gt_treeitem');
                         $(this).on('mouseup.s2gt_treeitem', function(e) {
-                            var id = $(this).attr('id').match(/-\d*$/)[0].replace('-','');
 
                             $(this).css('display', 'none');
                             $(this).css('visibility', 'hidden');
@@ -364,7 +361,7 @@
             var c_id;
             if (typeof $(this).data('data') !== undefined && typeof $(this).data('data').element !== undefined) {
                 c_parent_id = $($(this).data('data').element).attr('parent')
-                c_id = $($(this).data('data').element).attr('parent')
+                c_id = $($(this).data('data').element).attr('value')
             } else {
                 return;
             }
@@ -415,8 +412,8 @@
                 $(this).off('mouseup.s2gt_treeitem');
                 $(this).on('mouseup.s2gt_treeitem', function(e) {
                     //var cid = $(this).attr('id').match(/-\d*$/)[0].replace('-','');
-                    var cparent_id = get_parent_id(cid);
-                    breadcrumb.push(cparent_id);
+                    var c_parent_id = get_parent_id(c_id);
+                    breadcrumb.push(c_parent_id);
 
                     if (opts.showBreadcrumbs) {
                         breadcrumb_texts.push($(this).text());
@@ -424,6 +421,7 @@
                     }
 
                     if (has_children(c_id)) {
+                        console.log('has children' + c_id);
                         open_children(c_id);
                         e.preventDefault();
                         e.stopPropagation();
@@ -494,7 +492,11 @@
         target_id = orig_id.replace(/select2-(.*)-result-.*$/, 'select2-$1-container');
 
         select_id = orig_id.replace(/select2-(.*)-result-.*$/, '$1');
-        value = orig_id.match(/-\d*$/)[0].replace('-','');
+
+        var value = '';
+        if (typeof $(obj).data('data') !== undefined && typeof $(obj).data('data').element !== undefined) {
+            value = $($(obj).data('data').element).attr('value')
+        }
 
         $('#' + select_id).val(value);
 
