@@ -192,14 +192,18 @@ THE SOFTWARE.
             }
         });
 
+        console.log(display_ids);
+
 		setTimeout(function() {
 
             $(".select2-results__options li").each(function() {
                 id = $(this).attr('id');
 
                 var parent_id;
+                var c_id;
                 var text;
                 if (typeof $(this).data('data') !== undefined && typeof $(this).data('data').element !== undefined) {
+                    c_id = $($(this).data('data').element).attr('value')
                     parent_id = $($(this).data('data').element).attr('parent')
                     text = $($(this).data('data').element).text();
                 } else {
@@ -220,9 +224,9 @@ THE SOFTWARE.
                     });
                 }
 
-                if (id && id.match(/-\d*$/) && display_ids.indexOf(id.match(/-\d*$/)[0].replace('-','')) > -1) {
+                if (typeof c_id !== 'undefined' && display_ids.indexOf(c_id) > -1) {
 
-					if (has_children(id.match(/-\d*$/)[0].replace('-',''))) {
+					if (has_children(c_id)) {
                         if (opts.showBreadcrumbs) {
                             if ($('.select2gtree-breadcrumb')) {
                                 $('.select2gtree-breadcrumb').show('fast');
@@ -349,8 +353,8 @@ THE SOFTWARE.
                 return;
             }
 
-            if (id && id.match(/-\d*$/) && c_parent_id == parent_id) {
-                if (has_children(id.match(/-\d*$/)[0].replace('-',''))) {
+            if (typeof c_id !== 'undefined' && c_parent_id == parent_id) {
+                if (has_children(c_id)) {
                     $(this).css('font-weight', 'bold');
 
                     //TODO: callback to decorate bold items
@@ -394,7 +398,7 @@ THE SOFTWARE.
 
                 $(this).off('mouseup.s2gt_treeitem');
                 $(this).on('mouseup.s2gt_treeitem', function(e) {
-                    var cid = $(this).attr('id').match(/-\d*$/)[0].replace('-','');
+                    //var cid = $(this).attr('id').match(/-\d*$/)[0].replace('-','');
                     var cparent_id = get_parent_id(cid);
                     breadcrumb.push(cparent_id);
 
@@ -403,8 +407,8 @@ THE SOFTWARE.
                         update_breadcrumb(breadcrumb_texts);
                     }
 
-                    if (has_children(cid)) {
-                        open_children(cid);
+                    if (has_children(c_id)) {
+                        open_children(c_id);
                         e.preventDefault();
                         e.stopPropagation();
                     } else {
