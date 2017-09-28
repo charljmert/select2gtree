@@ -790,12 +790,23 @@
 
 <select id="parent_type_id" class="input-group select2-hidden-accessible" style="width:100%" tabindex="-1" aria-hidden="true">
 								<option></option>
-								<option value="none" parent="0">None</option><option value="19" parent="16">ADSL</option><option value="21" parent="19">Adsl Sales - Capped</option><option value="20" parent="19">Adsl Sales - Uncapped</option><option value="1" parent="0">BANDWIDTH</option><option value="6" parent="12">Call Outs</option><option value="23" parent="0">Cyclic Ref 1</option><option value="7">Data Topups</option><option value="8">Hardware</option><option value="9">Hosting Products</option><option value="10">Hosting Usage</option><option value="2">HOTSPOT</option><option value="11">Installation</option><option value="16" parent="1" selected="">Internet Services</option><option value="12" parent="6">Labour</option><option value="13">Software</option><option value="24" parent="5">TestBrowse</option><option value="25" parent="24">TestBrowsing</option><option value="3" parent="0">TOPUP</option><option value="4" parent="1">VOIP</option><option value="14" parent="4">VOIP Products</option><option value="15">VOIP Usage</option><option value="5" parent="4">VOIPUSAGE</option><option value="17" parent="16">Wireless</option><option value="18" parent="17">Wireless Sales - Capped</option><option value="22" parent="17">Wireless Sales - Uncapped</option>							</select>
+								<option value>None</option><option value="19" parent="16">ADSL</option><option value="21" parent="19">Adsl Sales - Capped</option><option value="20" parent="19">Adsl Sales - Uncapped</option><option value="1" parent="0">BANDWIDTH</option><option value="6" parent="12">Call Outs</option><option value="23" parent="0">Cyclic Ref 1</option><option value="7">Data Topups</option><option value="8">Hardware</option><option value="9">Hosting Products</option><option value="10">Hosting Usage</option><option value="2">HOTSPOT</option><option value="11">Installation</option><option value="16" parent="1" selected="">Internet Services</option><option value="12" parent="6">Labour</option><option value="13">Software</option><option value="24" parent="5">TestBrowse</option><option value="25" parent="24">TestBrowsing</option><option value="3" parent="0">TOPUP</option><option value="4" parent="1">VOIP</option><option value="14" parent="4">VOIP Products</option><option value="15">VOIP Usage</option><option value="5" parent="4">VOIPUSAGE</option><option value="17" parent="16">Wireless</option><option value="18" parent="17">Wireless Sales - Capped</option><option value="22" parent="17">Wireless Sales - Uncapped</option>							</select>
 
+<br/>
+
+<select id="cyclic_id" class="input-group select2-hidden-accessible" style="width:100%" tabindex="-1" aria-hidden="true">
+								<option></option>
+								<option value="">None</option><option value="1" parent="1" selected="">BANDWIDTH</option><option value="16" parent="16">BANDWIDTH EXAMPLE</option><option value="6" parent="6">Call Outs</option><option value="7" parent="7">Data Topups</option><option value="8" parent="8">Hardware</option><option value="9" parent="9">Hosting Products</option><option value="10" parent="10">Hosting Usage</option><option value="2" parent="2">HOTSPOT</option><option value="11" parent="11">Installation</option><option value="12" parent="12">Labour</option><option value="13" parent="13">Software</option><option value="3" parent="16">TOPUP</option><option value="4" parent="4">VOIP</option><option value="14" parent="14">VOIP Products</option><option value="15" parent="15">VOIP Usage</option><option value="5" parent="5">VOIPUSAGE</option>							</select>
+<br/>
+<h4>Cannot read property 'replace' of undefined select2gtree.js:492</h4>
+<select id="bug3" style="width:100%" tabindex="-1" aria-hidden="true">
+								<option value="" selected="">None</option><option value="6" parent="0">Call Outs</option><option value="23" parent="0">Cyclic Ref 1</option><option value="7">Data Topups</option><option value="8">Hardware</option><option value="9">Hosting Products</option><option value="10">Hosting Usage</option><option value="2">HOTSPOT</option><option value="11">Installation</option><option value="12" parent="6">Labour</option><option value="13">Software</option><option value="3" parent="0">TOPUP</option><option value="15">VOIP Usage</option>							</select>
 
     <script type="text/javascript">
         $("#test-select2").select2();
         $("#parent_type_id").select2gtree();
+        $("#cyclic_id").select2gtree();
+        $("#bug3").select2gtree();
     </script>
 
 </body>

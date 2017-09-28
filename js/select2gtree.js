@@ -421,7 +421,6 @@
                     }
 
                     if (has_children(c_id)) {
-                        console.log('has children' + c_id);
                         open_children(c_id);
                         e.preventDefault();
                         e.stopPropagation();
@@ -489,6 +488,10 @@
 
     function select(obj) {
         orig_id = $(obj).attr('id');
+        if (typeof orig_id === 'undefined') {
+            return false;
+        }
+
         target_id = orig_id.replace(/select2-(.*)-result-.*$/, 'select2-$1-container');
 
         select_id = orig_id.replace(/select2-(.*)-result-.*$/, '$1');
