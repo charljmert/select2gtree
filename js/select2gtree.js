@@ -26,6 +26,7 @@
 
 // Uses CommonJS, AMD or browser globals to create a jQuery plugin.
 
+/*
 (function (factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
@@ -53,6 +54,8 @@
         factory(jQuery);
     }
 } (function (jQuery) {
+*/
+
 
 // Select2GT - an object representing a concept that you want
 // to model (e.g. a car)
@@ -72,15 +75,16 @@ var Select2GT = {
     target_id : null,
 
     init: function( options, elem ) {
+        var self = this;
         // Mix in the passed-in options with the default options
-        this.options = $.extend( {}, this.options, options );
+        self.options = $.extend( {}, self.options, options );
 
         // Save the element reference, both as a jQuery
         // reference and a normal reference
-        this.elem  = elem;
-        this.$elem = $(elem);
+        self.elem  = elem;
+        self.$elem = $(elem);
 
-        if (this.$elem.data('select2gtree')) {
+        if (self.$elem.data('select2gtree')) {
             return false;
         }
 
@@ -97,13 +101,20 @@ var Select2GT = {
         //TODO: implement prototype pattern, store object in data('select2gtree') - https://github.com/jquery-boilerplate/jquery-patterns/blob/master/patterns/jquery.prototypal-inheritance.plugin-boilerplate.js
         //TODO: support/test install from npm, bower etc.
 
-        this.$elem.select2(this.options).on("select2:open", open);
+        //this.$elem.select2(this.options).on("select2:open", self.open);
+        self.$elem.select2(self.options).on("select2:open", function(e){ self.open(); });
+        /*
+        self.$elem.select2(self.options).on("select2:open", function(e){
+            setTimeout(function(){
+                $(".select2-results__options li").each(function() {
+                    console.log(this);
+                })
+            }, 0);
+        });
+        */
 
-        this.select2_obj = this.$elem.data('select2');
-        this.select2_core(this);
-
-        // Build the DOM's initial structure
-        this._build();
+        self.select2_obj = self.$elem.data('select2');
+        self.select2_core();
 
         // return this so that we can chain and use the bridge with less code.
         return this;
@@ -114,28 +125,21 @@ var Select2GT = {
         showUseButton: true,
         showBreadcrumbs: true
     },
-    _build: function() {
-        this.$elem.html('<h1>'+this.options.name+'</h1>');
-    },
-    myMethod: function( msg ) {
-        // You have direct access to the associated and cached
-        // jQuery element
-        console.log("myMethod triggered");
-        // this.$elem.append('<p>'+msg+'</p>');
-    },
-    select2_core: function(obj) {
+    select2_core: function() {
+        self = this;
+
         //console.log(this.select2_obj);
-        this.select2_obj.on('select', function (e) {
-            if (this.options.showBreadcrumbs) {
-                clear_breadcrumbs();
-                $('#' + this.target_id).text(this.selected_text);
+        self.select2_obj.on('select', function (e) {
+            if (self.options.showBreadcrumbs) {
+                self.clear_breadcrumbs();
+                $('#' + self.target_id).text(self.selected_text);
             }
         });
 
-        this.select2_obj.on('close', function (params) {
-            if (this.options.showBreadcrumbs) {
-                clear_breadcrumbs();
-                $('#' + this.target_id).text(this.prev_this.selected_text);
+        self.select2_obj.on('close', function (params) {
+            if (self.options.showBreadcrumbs) {
+                self.clear_breadcrumbs();
+                $('#' + self.target_id).text(self.prev_selected_text);
             }
         });
 
@@ -154,33 +158,36 @@ var Select2GT = {
 
     //TODO: decorate and bind elements once
 	open: function() {
-		instance_id = this.$elem.data('select2gtree_id');
+        self = this;
+
+		instance_id = self.$elem.data('select2gtree_id');
         $('.select2-search').css('display', 'block');
         $('.select2-results').css('display', 'block');
 
-        select_id = this.$elem.attr('id');
-        this.target_id = 'select2-' + select_id + '-container';
-        this.prev_this.selected_text = $('#' + this.target_id).attr('title');
+        select_id = self.$elem.attr('id');
+        self.target_id = 'select2-' + select_id + '-container';
 
-        this.select_ptr = this;
-        this.$elem.children().each(function(i, o){
-            this.parent_ids.push({
+        self.prev_selected_text = $('#' + self.target_id).attr('title');
+
+        self.select_ptr = self;
+        self.$elem.children().each(function(i, o){
+            self.parent_ids.push({
                 id : $(o).attr('value'),
                 parent_id: ($(o).attr('parent'))? $(o).attr('parent') : null,
                 selected: ($(o).attr('selected'))? true : false
             });
         });
 
-		if (this.open_counter[instance_id] == 0) {
+		if (self.open_counter[instance_id] == 0) {
             // Breadcrumb
             /*
-            if (this.options.showBreadcrumbs) {
-                if ($('.select2gtree-this.breadcrumb')) {
-                    $('.select2gtree-this.breadcrumb').remove();
+            if (self.options.showBreadcrumbs) {
+                if ($('.select2gtree-self.breadcrumb')) {
+                    $('.select2gtree-self.breadcrumb').remove();
                 }
-                $('.select2').prepend('<div class="select2gtree-this.breadcrumb"></div>');
-                $('.select2gtree-this.breadcrumb').hide('fast');
-                $('.select2gtree-this.breadcrumb').text('');
+                $('.select2').prepend('<div class="select2gtree-self.breadcrumb"></div>');
+                $('.select2gtree-self.breadcrumb').hide('fast');
+                $('.select2gtree-self.breadcrumb').text('');
             }
             */
 
@@ -193,100 +200,104 @@ var Select2GT = {
 
 			$('#select2tree_back').unbind('mousedown');
 			$('#select2tree_back').on('mousedown', function(){
-				parent_id = this.breadcrumb.pop();
+				parent_id = self.breadcrumb.pop();
 
-                if (this.options.showBreadcrumbs) {
-                    this.breadcrumb_texts.pop();
-                    update_breadcrumb(this.breadcrumb_texts);
+                if (self.options.showBreadcrumbs) {
+                    self.breadcrumb_texts.pop();
+                    self.update_breadcrumb(self.breadcrumb_texts);
                 }
 
-				//console.log(this.breadcrumb);
+				//console.log(self.breadcrumb);
 
-				open_children(parent_id);
+				self.open_children(parent_id);
 			});
 
         }
 
-        this.$elem.children().each(function(i, o) {
+        self.$elem.children().each(function(i, o) {
             if (!$(o).attr('parent') || $(o).attr('parent') == '' || $(o).attr('parent') == '0') {
                 ////console.log($(o).text());
                 ////console.log($(o).val());
-                this.display_ids.push($(o).val());
+                self.display_ids.push($(o).val());
             }
         });
 
         /*
-         TODO: implement prototype pattern, create init and one open(parent_id) before this can be completed
-        // correct this.breadcrumb for default values being child elements
+         TODO: implement prototype pattern, create init and one open(parent_id) before self can be completed
+        // correct self.breadcrumb for default values being child elements
         var selected_parent_id = $('#' + select_id).find('option[value="'+$('#' + select_id).val()+'"]').attr('parent');
 
         if (typeof selected_parent_id !== undefined && selected_parent_id != null && selected_parent_id != 0 && selected_parent_id != '') {
             console.log('corercting default child' + selected_parent_id );
-            this.breadcrumb.push(selected_parent_id);
-            console.log(set_this.breadcrumb_offset(selected_parent_id));
+            self.breadcrumb.push(selected_parent_id);
+            console.log(set_self.breadcrumb_offset(selected_parent_id));
             open_children(selected_parent_id);
             return;
         }
         */
 
 		setTimeout(function() {
-
             $(".select2-results__options li").each(function() {
-                id = this.$elem.attr('id');
+                id = $(this).attr('id');
+
+                // Skipping "No Results" and other messages
+                if ($(this).hasClass('select2-results__message')) {
+                    return true;
+                }
 
                 var parent_id;
                 var text;
-                if (typeof this.$elem.data('data') !== undefined && typeof this.$elem.data('data').element !== undefined) {
-                    parent_id = $(this.$elem.data('data').element).attr('parent')
-                    text = $(this.$elem.data('data').element).text();
+                if (typeof $(this).data('data') !== undefined && typeof $(this).data('data').element !== undefined) {
+                    parent_id = $($(this).data('data').element).attr('parent')
+                    text = $($(this).data('data').element).text();
                 } else {
                     return;
                 }
 
-                if (this.options.showBreadcrumbs) {
-                    this.$elem.on('mouseover', function() {
-                        this.breadcrumb_texts.push(text);
-                        update_breadcrumb(this.breadcrumb_texts);
-                        this.selected_text = text;
+                if (self.options.showBreadcrumbs) {
+                    $(this).on('mouseover', function() {
+                        self.breadcrumb_texts.push(text);
+                        self.update_breadcrumb(self.breadcrumb_texts);
+                        self.selected_text = text;
                     });
 
-                    this.$elem.on('mouseout', function() {
-                        this.breadcrumb_texts.pop();
-                        update_breadcrumb(this.breadcrumb_texts);
-                        this.selected_text = '';
+                    $(this).on('mouseout', function() {
+                        self.breadcrumb_texts.pop();
+                        self.update_breadcrumb(self.breadcrumb_texts);
+                        self.selected_text = '';
                     });
                 }
 
-                if (id && id.match(/-\d*$/) && this.display_ids.indexOf(id.match(/-\d*$/)[0].replace('-','')) > -1) {
+                if (id && id.match(/-\d*$/) && self.display_ids.indexOf(id.match(/-\d*$/)[0].replace('-','')) > -1) {
 
-					if (has_children(id.match(/-\d*$/)[0].replace('-',''))) {
-                        if (this.options.showBreadcrumbs) {
-                            if ($('.select2gtree-this.breadcrumb')) {
-                                $('.select2gtree-this.breadcrumb').show('fast');
+					if (self.has_children(id.match(/-\d*$/)[0].replace('-',''))) {
+                        if (self.options.showBreadcrumbs) {
+                            if ($('.select2gtree-self.breadcrumb')) {
+                                $('.select2gtree-self.breadcrumb').show('fast');
                             }
                         }
 
                         //TODO: callback to decorate bold items
-						//this.$elem.decorateBold($this);
-						////console.log(this.$elem.text());
-						this.$elem.css('font-weight', 'bold');
+						//self.$elem.decorateBold($self);
+						////console.log(self.$elem.text());
+						$(this).css('font-weight', 'bold');
 
                         // use button
-                        if (this.options.showUseButton) {
-                            this.$elem.data('mouseover_counter', 0);
-                            var item = this.$elem;
+                        if (self.options.showUseButton) {
+                            $(this).data('mouseover_counter', 0);
+                            var item = $(this);
                             $('#' + id).off('mouseover.s2gt_use');
                             $('#' + id).on('mouseover.s2gt_use', function() {
-                                this.$elem.data('mouseover_counter', this.$elem.data('mouseover_counter') + 1);
-                                if (this.$elem.data('mouseover_counter') == 1) {
-                                    this.$elem.append('<span id="' + id + '_use" class="btn btn-default pull-right" style="width:30%; margin:0px; padding: 0px">Use</span>');
+                                $(this).data('mouseover_counter', $(this).data('mouseover_counter') + 1);
+                                if ($(this).data('mouseover_counter') == 1) {
+                                    $(this).append('<span id="' + id + '_use" class="btn btn-default pull-right" style="width:30%; margin:0px; padding: 0px">Use</span>');
 
                                     $('#' + id + '_use').off('mousedown.s2gt_use');
                                     $('#' + id + '_use').on('mousedown.s2gt_use', function(e) {
                                         //console.log('mousedown: click: button use');
 
                                         $('#' + id + '_use').remove();
-                                        select(item);
+                                        self.select(item);
 
                                         e.preventDefault();
                                         e.stopPropagation();
@@ -295,57 +306,57 @@ var Select2GT = {
                             });
                             $('#' + id).off('mouseleave.s2gt_use');
                             $('#' + id).on('mouseleave.s2gt_use', function() {
-                                this.$elem.data('mouseover_counter', 0);
+                                $(this).data('mouseover_counter', 0);
                                 $('#' + id + '_use').remove();
                             });
                         }
 
-                        this.$elem.off('mouseup.s2gt_treeitem');
-                        this.$elem.on('mouseup.s2gt_treeitem', function(e) {
-                            var id = this.$elem.attr('id').match(/-\d*$/)[0].replace('-','');
+                        $(this).off('mouseup.s2gt_treeitem');
+                        $(this).on('mouseup.s2gt_treeitem', function(e) {
+                            var id = $(this).attr('id').match(/-\d*$/)[0].replace('-','');
 
-                            this.$elem.css('display', 'none');
-                            this.$elem.css('visibility', 'hidden');
+                            $(this).css('display', 'none');
+                            $(this).css('visibility', 'hidden');
 
-                            this.breadcrumb.push(parent_id);
+                            self.breadcrumb.push(parent_id);
 
-                            if (this.options.showBreadcrumbs) {
-                                this.breadcrumb_texts.push(this.$elem.text());
-                                update_breadcrumb(this.breadcrumb_texts);
+                            if (self.options.showBreadcrumbs) {
+                                self.breadcrumb_texts.push(self.$elem.text());
+                                self.update_breadcrumb(self.breadcrumb_texts);
                             }
 
-                            open_children(id);
+                            self.open_children(id);
 							e.preventDefault();
 							e.stopPropagation();
                         });
 					} else {
 
-                        this.$elem.off('mouseup.s2gt_treeitem');
-                        this.$elem.on('mouseup.s2gt_treeitem', function(e) {
-                            var id = this.$elem.attr('id').match(/-\d*$/)[0].replace('-','');
+                        $(this).off('mouseup.s2gt_treeitem');
+                        $(this).on('mouseup.s2gt_treeitem', function(e) {
+                            var id = $(this).attr('id').match(/-\d*$/)[0].replace('-','');
 
-                            this.$elem.css('display', 'none');
-                            this.$elem.css('visibility', 'hidden');
+                            $(this).css('display', 'none');
+                            $(this).css('visibility', 'hidden');
 
-                            select(this);
+                            self.select(this);
                         });
                     }
 
                 } else {
-                    this.$elem.css('display', 'none');
-                    this.$elem.css('visibility', 'hidden');
+                    $(this).css('display', 'none');
+                    $(this).css('visibility', 'hidden');
                 }
 
                 // Scroll to selected
                 /*
-                for (x = 0; (x < this.parent_ids.length); x++) {
-                    if (id && this.parent_ids[x].id == id.match(/-\d*$/)[0].replace('-','')) {
-                        if (this.parent_ids[x].selected) {
+                for (x = 0; (x < self.parent_ids.length); x++) {
+                    if (id && self.parent_ids[x].id == id.match(/-\d*$/)[0].replace('-','')) {
+                        if (self.parent_ids[x].selected) {
                             console.log("$('#" + id + "').offset().top");
-                            console.log(this.$elem.offset());
+                            console.log(self.$elem.offset());
                             console.log($('.select2-results__options').outerHeight(false));
                             $('.select2-results__options').animate({
-                                scrollTop: this.$elem.offset().top - $('.select2-results__options').outerHeight(false) - 55
+                                scrollTop: self.$elem.offset().top - $('.select2-results__options').outerHeight(false) - 55
                             }, 1);
                         }
                     }
@@ -356,11 +367,12 @@ var Select2GT = {
 
         }, 0);
 
-        this.open_counter[instance_id]++;
+        self.open_counter[instance_id]++;
 	},
 
 	open_children: function (parent_id) {
-        orig_id = this.$elem.attr('id');
+        var self = this;
+        orig_id = self.$elem.attr('id');
         select_id = orig_id.replace(/select2-(.*)-result-.*$/, '$1');
 
 		if (parent_id == undefined) {
@@ -368,47 +380,47 @@ var Select2GT = {
 		}
 
         $(".select2-results__options li").each(function() {
-            this.$elem.css('display', 'none');
-            this.$elem.css('visibility', 'hidden');
+            $(this).css('display', 'none');
+            $(this).css('visibility', 'hidden');
         });
 
         $(".select2-results__options li").each(function() {
-            id = this.$elem.attr('id');
+            id = $(this).attr('id');
 
             var c_parent_id;
             var c_id;
-            if (typeof this.$elem.data('data') !== undefined && typeof this.$elem.data('data').element !== undefined) {
-                c_parent_id = $(this.$elem.data('data').element).attr('parent')
-                c_id = $(this.$elem.data('data').element).attr('parent')
+            if (typeof $(this).data('data') !== undefined && typeof $(this).data('data').element !== undefined) {
+                c_parent_id = $($(this).data('data').element).attr('parent')
+                c_id = $($(this).data('data').element).attr('value')
             } else {
                 return;
             }
 
             if (id && id.match(/-\d*$/) && c_parent_id == parent_id) {
-                if (has_children(id.match(/-\d*$/)[0].replace('-',''))) {
-                    this.$elem.css('font-weight', 'bold');
+                if (self.has_children(id.match(/-\d*$/)[0].replace('-',''))) {
+                    $(this).css('font-weight', 'bold');
 
                     //TODO: callback to decorate bold items
-                    //this.$elem.decorateBold($this); 
-                    ////console.log(this.$elem.text());
-                    this.$elem.css('font-weight', 'bold');
+                    //self.$elem.decorateBold($self); 
+                    ////console.log(self.$elem.text());
+                    $(this).css('font-weight', 'bold');
 
                     // use button
-                    if (this.options.showUseButton) {
-                        this.$elem.data('mouseover_counter', 0);
-                        var item = this.$elem;
+                    if (self.options.showUseButton) {
+                        $(this).data('mouseover_counter', 0);
+                        var item = $(this);
                         $('#' + id).off('mouseover.s2gt_use');
                         $('#' + id).on('mouseover.s2gt_use', function() {
-                            this.$elem.data('mouseover_counter', this.$elem.data('mouseover_counter') + 1);
-                            if (this.$elem.data('mouseover_counter') == 1) {
-                                this.$elem.append('<span id="' + id + '_use" class="btn btn-default pull-right" style="width:30%; margin:0px; padding: 0px">Use</span>');
+                            $(this).data('mouseover_counter', $(this).data('mouseover_counter') + 1);
+                            if ($(this).data('mouseover_counter') == 1) {
+                                $(this).append('<span id="' + id + '_use" class="btn btn-default pull-right" style="width:30%; margin:0px; padding: 0px">Use</span>');
 
                                 $('#' + id + '_use').off('mousedown.s2gt_use');
                                 $('#' + id + '_use').on('mousedown.s2gt_use', function(e){
                                     //console.log('mousedown: click: button use');
 
                                     $('#' + id + '_use').remove();
-                                    select(item);
+                                    self.select(item);
 
                                     e.preventDefault();
                                     e.stopPropagation();
@@ -417,34 +429,33 @@ var Select2GT = {
                         });
                         $('#' + id).off('mouseleave.s2gt_use');
                         $('#' + id).on('mouseleave.s2gt_use', function() {
-                            this.$elem.data('mouseover_counter', 0);
+                            $(this).data('mouseover_counter', 0);
                             $('#' + id + '_use').remove();
                         });
                     }
-
                 }
 
-                this.$elem.css('display', 'block');
-                this.$elem.css('visibility', 'visible');
+                $(this).css('display', 'block');
+                $(this).css('visibility', 'visible');
 
-                this.$elem.off('mouseup.s2gt_treeitem');
-                this.$elem.on('mouseup.s2gt_treeitem', function(e) {
-                    var cid = this.$elem.attr('id').match(/-\d*$/)[0].replace('-','');
-                    var cparent_id = get_parent_id(cid);
-                    this.breadcrumb.push(cparent_id);
+                $(this).off('mouseup.s2gt_treeitem');
+                $(this).on('mouseup.s2gt_treeitem', function(e) {
+                    var cid = $(this).attr('id').match(/-\d*$/)[0].replace('-','');
+                    var cparent_id = self.get_parent_id(cid);
+                    self.breadcrumb.push(cparent_id);
 
-                    if (this.options.showBreadcrumbs) {
-                        this.breadcrumb_texts.push(this.$elem.text());
-                        update_breadcrumb(this.breadcrumb_texts);
+                    if (self.options.showBreadcrumbs) {
+                        self.breadcrumb_texts.push(self.$elem.text());
+                        self.update_breadcrumb(self.breadcrumb_texts);
                     }
 
-                    if (has_children(cid)) {
-                        open_children(cid);
+                    if (self.has_children(cid)) {
+                        self.open_children(cid);
                         e.preventDefault();
                         e.stopPropagation();
                     } else {
-                        // Default select handler will handle this
-                        //select(this);
+                        // Default select handler will handle self
+                        //select(self);
                     }
                 });
             }
@@ -535,14 +546,14 @@ var Select2GT = {
         $('.select2').removeClass('select2-container--open');
         $('.select2').addClass('select2-container--below');
 
-        clear_breadcrumbs();
+        this.clear_breadcrumbs();
     },
 
     update_breadcrumb: function(breadcrumb_texts) {
         if (this.breadcrumb_texts.length > 0) {
             $('#' + this.target_id).text(this.breadcrumb_texts.join(' / '));
         } else {
-            $('#' + this.target_id).text(this.prev_this.selected_text);
+            $('#' + this.target_id).text(this.prev_selected_text);
         }
     },
 
@@ -592,7 +603,6 @@ $.fn.select2gtree = function( name, object ) {
 
     };
 
-
-
-
+/*
 }));
+*/
