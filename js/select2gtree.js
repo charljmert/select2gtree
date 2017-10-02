@@ -92,6 +92,7 @@ var Select2GT = {
         //DONE: fix speed issue, back button child select
         //DONE: add showBreadcrumbs option
         //DONE: $('timezone').val(1).change(); select2 changes the value already
+        //TODO: selected item grey
         //TODO: fix back button, breadcrumbs on nested default selected
         //TODO: demo templateResult styling
         //TODO: scroll to selected item
